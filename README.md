@@ -8,7 +8,7 @@ Tecnologia principal: React Native + Expo + TypeScript
 
 ## Estado
 
-Fase 2A: capa local de persistencia de favoritos con SQLite.
+Fase 2B: estado global de favoritos conectado a la persistencia SQLite.
 
 ## Alcance de esta fase
 
@@ -19,7 +19,8 @@ Fase 2A: capa local de persistencia de favoritos con SQLite.
 - Tarjeta reutilizable para mostrar cada pelicula.
 - Navegacion tipada entre exploracion y detalle.
 - Detalle con poster, fecha de estreno, calificacion y sinopsis.
-- Persistencia local de favoritos con `expo-sqlite`, aislada de la UI y del estado global.
+- Persistencia local de favoritos con `expo-sqlite`, encapsulada en `src/storage/`.
+- `FavoritesContext` para cargar y mantener el estado global de favoritos.
 - Enunciado del proyecto disponible en `docs/public_Tarea_2.pdf`.
 
 ## Estructura actual
@@ -29,7 +30,8 @@ src/
 ├── components/
 │   └── MovieCard.tsx
 ├── context/
-│   └── AppContext.tsx
+│   ├── AppContext.tsx
+│   └── FavoritesContext.tsx
 ├── navigation/
 │   ├── AppNavigator.tsx
 │   └── types.ts
@@ -44,9 +46,9 @@ src/
     └── movie.ts
 ```
 
-`src/storage/` concentra la inicializacion de SQLite y las operaciones para guardar, leer,
-eliminar y consultar favoritos. La interfaz de favoritos y su integracion con Context se
-agregaran en fases posteriores; la persistencia aun no se ha validado en runtime.
+`FavoritesContext` coordina el estado global de favoritos y delega la persistencia a
+`src/storage/`. La interfaz de favoritos aun no esta implementada y la integracion no se ha
+validado en runtime.
 
 ## Configuracion de TMDB
 
