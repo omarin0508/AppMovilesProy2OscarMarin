@@ -110,17 +110,3 @@ export async function deleteFavorite(movieId: number): Promise<void> {
     throw new Error(`No fue posible eliminar la pelicula favorita: ${describeError(error)}`);
   }
 }
-
-export async function isFavorite(movieId: number): Promise<boolean> {
-  try {
-    const database = await getDatabase();
-    const row = await database.getFirstAsync<{ id: number }>(
-      'SELECT id FROM favorites WHERE id = ? LIMIT 1',
-      movieId,
-    );
-
-    return row !== null;
-  } catch (error: unknown) {
-    throw new Error(`No fue posible consultar la pelicula favorita: ${describeError(error)}`);
-  }
-}

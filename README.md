@@ -53,6 +53,49 @@ src/
 `src/storage/`. La interfaz permite agregar, quitar y consultar favoritos. La persistencia
 SQLite se valido en Android al cerrar y volver a abrir la aplicacion.
 
+## Arquitectura
+
+El flujo de datos remotos implementado es:
+
+```text
+TMDB REST API
+    -> movieService
+    -> AppContext
+    -> ExploreScreen / MovieDetailScreen
+```
+
+El flujo de datos locales implementado es:
+
+```text
+SQLite
+    -> favoriteStorage
+    -> FavoritesContext
+    -> MovieDetailScreen / FavoritesScreen
+```
+
+- `movieService` realiza las solicitudes REST, maneja respuestas HTTP y errores, y transforma
+  el JSON de TMDB al modelo `Movie` del proyecto.
+- `AppContext` mantiene el estado remoto de peliculas, sus estados de carga y error, y coordina
+  la carga de datos.
+- `favoriteStorage` inicializa SQLite y encapsula el guardado, lectura y eliminacion de favoritos.
+- `FavoritesContext` mantiene el estado de favoritos y coordina las operaciones de persistencia
+  con la interfaz.
+- Las pantallas y componentes presentan datos y procesan la interaccion del usuario, sin SQL ni
+  implementaciones directas de red.
+- La navegacion define transiciones tipadas entre Explore, MovieDetail y Favorites.
+
+## Trazabilidad de requisitos
+
+- API REST: TMDB.
+- JSON: las respuestas se transforman al modelo `Movie` del proyecto.
+- Estado global: React Context API mediante `AppContext` y `FavoritesContext`.
+- Persistencia local: SQLite mediante `expo-sqlite`.
+- Operaciones locales: guardar, leer y eliminar favoritos.
+- Separacion de responsabilidades: red, base de datos, estado, vistas, navegacion y tipos se
+  mantienen en modulos distintos.
+- La persistencia SQLite fue validada en tiempo de ejecucion entre reinicios del proceso de la
+  aplicacion.
+
 ## Configuracion de TMDB
 
 1. Copiar `.env.example` como `.env`.

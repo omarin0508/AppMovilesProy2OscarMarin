@@ -42,71 +42,85 @@ export function FavoritesProvider({ children }: PropsWithChildren) {
   const [favoritesLoading, setFavoritesLoading] = useState(true);
   const [favoritesError, setFavoritesError] = useState<string | null>(null);
 
-  const loadFavorites = useCallback(async () => {
-    setFavoritesLoading(true);
-    setFavoritesError(null);
+  const refreshFavorites = useCallback(
+    async (
+      operation: () => Promise<Movie[]>,
+      fallbackError: string,
+      isActive: () => boolean = () => true,
+    ) => {
+      if (!isActive()) {
+        return;
+      }
 
-    try {
-      setFavorites(await readPersistedFavorites());
-    } catch (error: unknown) {
-      setFavoritesError(getErrorMessage(error, 'No se pudieron cargar las peliculas favoritas.'));
-    } finally {
-      setFavoritesLoading(false);
-    }
-  }, []);
+      setFavoritesLoading(true);
+      setFavoritesError(null);
+
+      try {
+        const storedFavorites = await operation();
+
+        if (isActive()) {
+          setFavorites(storedFavorites);
+        }
+      } catch (error: unknown) {
+        if (isActive()) {
+          setFavoritesError(getErrorMessage(error, fallbackError));
+        }
+      } finally {
+        if (isActive()) {
+          setFavoritesLoading(false);
+        }
+      }
+    },
+    [],
+  );
+
+  const loadPersistedFavorites = useCallback(
+    (isActive?: () => boolean) =>
+      refreshFavorites(
+        readPersistedFavorites,
+        'No se pudieron cargar las peliculas favoritas.',
+        isActive,
+      ),
+    [refreshFavorites],
+  );
+
+  const loadFavorites = useCallback(() => loadPersistedFavorites(), [loadPersistedFavorites]);
 
   useEffect(() => {
     let isMounted = true;
 
-    void readPersistedFavorites()
-      .then((storedFavorites) => {
-        if (isMounted) {
-          setFavorites(storedFavorites);
-        }
-      })
-      .catch((error: unknown) => {
-        if (isMounted) {
-          setFavoritesError(getErrorMessage(error, 'No se pudieron cargar las peliculas favoritas.'));
-        }
-      })
-      .finally(() => {
-        if (isMounted) {
-          setFavoritesLoading(false);
-        }
-      });
+    async function initializeFavorites() {
+      await Promise.resolve();
+
+      if (isMounted) {
+        await loadPersistedFavorites(() => isMounted);
+      }
+    }
+
+    void initializeFavorites();
 
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [loadPersistedFavorites]);
 
-  const addFavorite = useCallback(async (movie: Movie) => {
-    setFavoritesLoading(true);
-    setFavoritesError(null);
+  const addFavorite = useCallback(
+    (movie: Movie) =>
+      refreshFavorites(async () => {
+        await saveFavorite(movie);
+        return getFavorites();
+      }, 'No se pudo guardar la pelicula favorita.'),
+    [refreshFavorites],
+  );
 
-    try {
-      await saveFavorite(movie);
-      setFavorites(await getFavorites());
-    } catch (error: unknown) {
-      setFavoritesError(getErrorMessage(error, 'No se pudo guardar la pelicula favorita.'));
-    } finally {
-      setFavoritesLoading(false);
-    }
-  }, []);
-
-  const removeFavorite = useCallback(async (movieId: number) => {
-    setFavoritesLoading(true);
-    setFavoritesError(null);
-
-    try {
-      await deleteFavorite(movieId);
-      setFavorites(await getFavorites());
-    } catch (error: unknown) {
-      setFavoritesError(getErrorMessage(error, 'No se pudo eliminar la pelicula favorita.'));
-    } finally {
-      setFavoritesLoading(false);
-    }
-  }, []);
+  const removeFavorite = useCallback(
+    (movieId: number) =>
+      refreshFavorites(async () => {
+        await deleteFavorite(movieId);
+        return getFavorites();
+      }, 'No se pudo eliminar la pelicula favorita.'),
+    [refreshFavorites],
+  );
 
   const isMovieFavorite = useCallback(
     (movieId: number) => favorites.some((movie) => movie.id === movieId),
