@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "Proyecto 2 Datos API",
+    "slug": "app-moviles-proy2-oscar-marin",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true
+  }
+}
