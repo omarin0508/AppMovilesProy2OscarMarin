@@ -1,11 +1,17 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useEffect } from 'react';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MovieCard } from '../components/MovieCard';
 import { useAppContext } from '../context/AppContext';
+import { RootStackParamList } from '../navigation/types';
 
-export function ExploreScreen() {
+type ExploreScreenProps = NativeStackScreenProps<RootStackParamList, 'Explore'>;
+
+export function ExploreScreen({ navigation }: ExploreScreenProps) {
   const { movies, loading, error, loadMovies } = useAppContext();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     void loadMovies();
@@ -38,7 +44,10 @@ export function ExploreScreen() {
 
   return (
     <FlatList
-      contentContainerStyle={styles.listContent}
+      contentContainerStyle={[
+        styles.listContent,
+        { paddingBottom: Math.max(insets.bottom, 32), paddingTop: Math.max(insets.top + 12, 20) },
+      ]}
       data={movies}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
       keyExtractor={(movie) => movie.id.toString()}
@@ -52,7 +61,9 @@ export function ExploreScreen() {
         </View>
       }
       refreshing={loading}
-      renderItem={({ item }) => <MovieCard movie={item} />}
+      renderItem={({ item }) => (
+        <MovieCard movie={item} onPress={() => navigation.navigate('MovieDetail', { movie: item })} />
+      )}
       onRefresh={() => void loadMovies()}
     />
   );
@@ -96,14 +107,12 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: 20,
-    paddingBottom: 32,
   },
   separator: {
     height: 14,
   },
   header: {
     marginBottom: 22,
-    paddingTop: 12,
   },
   eyebrow: {
     color: '#C2412D',

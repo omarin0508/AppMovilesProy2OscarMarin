@@ -1,23 +1,19 @@
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppProvider } from './src/context/AppContext';
-import { ExploreScreen } from './src/screens/ExploreScreen';
+import { AppNavigator } from './src/navigation/AppNavigator';
 
 export default function App() {
   return (
-    <AppProvider>
-      <SafeAreaView style={styles.container}>
-        <ExploreScreen />
+    <SafeAreaProvider>
+      <AppProvider>
+        <NavigationContainer>
+          <AppNavigator />
+        </NavigationContainer>
         <StatusBar style="dark" />
-      </SafeAreaView>
-    </AppProvider>
+      </AppProvider>
+    </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F4F6F8',
-  },
-});

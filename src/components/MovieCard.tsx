@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Movie } from '../types/movie';
 
@@ -6,13 +6,19 @@ const POSTER_BASE_URL = 'https://image.tmdb.org/t/p/w342';
 
 interface MovieCardProps {
   movie: Movie;
+  onPress: () => void;
 }
 
-export function MovieCard({ movie }: MovieCardProps) {
+export function MovieCard({ movie, onPress }: MovieCardProps) {
   const releaseYear = movie.releaseDate ? movie.releaseDate.slice(0, 4) : 'Sin fecha';
 
   return (
-    <View style={styles.card}>
+    <Pressable
+      accessibilityLabel={`Ver detalle de ${movie.title}`}
+      accessibilityRole="button"
+      onPress={onPress}
+      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+    >
       {movie.posterPath ? (
         <Image
           accessibilityLabel={`Poster de ${movie.title}`}
@@ -35,7 +41,7 @@ export function MovieCard({ movie }: MovieCardProps) {
           <Text style={styles.rating}>{movie.voteAverage.toFixed(1)} / 10</Text>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -48,6 +54,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     flexDirection: 'row',
     overflow: 'hidden',
+  },
+  cardPressed: {
+    opacity: 0.78,
   },
   poster: {
     width: 112,

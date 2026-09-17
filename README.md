@@ -8,7 +8,7 @@ Tecnologia principal: React Native + Expo + TypeScript
 
 ## Estado
 
-Fase 1A: corte vertical para consultar y mostrar peliculas populares de TMDB.
+Fase 1B: exploracion de peliculas populares y detalle mediante navegacion nativa.
 
 ## Alcance de esta fase
 
@@ -17,6 +17,8 @@ Fase 1A: corte vertical para consultar y mostrar peliculas populares de TMDB.
 - Context API con peliculas, carga, error y reintento.
 - Pantalla de exploracion construida con `FlatList`.
 - Tarjeta reutilizable para mostrar cada pelicula.
+- Navegacion tipada entre exploracion y detalle.
+- Detalle con poster, fecha de estreno, calificacion y sinopsis.
 - Sin almacenamiento local implementado todavia.
 - Enunciado del proyecto disponible en `docs/public_Tarea_2.pdf`.
 
@@ -28,15 +30,19 @@ src/
 │   └── MovieCard.tsx
 ├── context/
 │   └── AppContext.tsx
+├── navigation/
+│   ├── AppNavigator.tsx
+│   └── types.ts
 ├── screens/
-│   └── ExploreScreen.tsx
+│   ├── ExploreScreen.tsx
+│   └── MovieDetailScreen.tsx
 ├── services/
 │   └── movieService.ts
 └── types/
     └── movie.ts
 ```
 
-Las capas de detalle, favoritos, navegacion y persistencia se agregaran en fases posteriores.
+Las capas de favoritos y persistencia se agregaran en fases posteriores.
 
 ## Configuracion de TMDB
 
