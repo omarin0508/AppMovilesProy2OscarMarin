@@ -1,7 +1,9 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useFavoritesContext } from '../context/FavoritesContext';
 import { RootStackParamList } from '../navigation/types';
 
 const POSTER_BASE_URL = 'https://image.tmdb.org/t/p/w500';
@@ -20,7 +22,30 @@ function formatReleaseDate(releaseDate: string) {
 
 export function MovieDetailScreen({ route }: MovieDetailScreenProps) {
   const { movie } = route.params;
+  const { addFavorite, favoritesError, favoritesLoading, isMovieFavorite, removeFavorite } =
+    useFavoritesContext();
+  const [isMutatingFavorite, setIsMutatingFavorite] = useState(false);
   const insets = useSafeAreaInsets();
+  const isFavorite = isMovieFavorite(movie.id);
+  const favoriteActionDisabled = favoritesLoading || isMutatingFavorite;
+
+  const handleFavoritePress = async () => {
+    if (favoriteActionDisabled) {
+      return;
+    }
+
+    setIsMutatingFavorite(true);
+
+    try {
+      if (isFavorite) {
+        await removeFavorite(movie.id);
+      } else {
+        await addFavorite(movie);
+      }
+    } finally {
+      setIsMutatingFavorite(false);
+    }
+  };
 
   return (
     <ScrollView
@@ -42,6 +67,27 @@ export function MovieDetailScreen({ route }: MovieDetailScreenProps) {
 
       <View style={styles.information}>
         <Text style={styles.title}>{movie.title}</Text>
+
+        <Pressable
+          accessibilityRole="button"
+          disabled={favoriteActionDisabled}
+          onPress={() => void handleFavoritePress()}
+          style={({ pressed }) => [
+            styles.favoriteButton,
+            isFavorite && styles.removeFavoriteButton,
+            favoriteActionDisabled && styles.favoriteButtonDisabled,
+            pressed && !favoriteActionDisabled && styles.favoriteButtonPressed,
+          ]}
+        >
+          <Text style={[styles.favoriteButtonText, isFavorite && styles.removeFavoriteButtonText]}>
+            {isMutatingFavorite
+              ? 'Actualizando...'
+              : isFavorite
+                ? 'Quitar de favoritos'
+                : 'Agregar a favoritos'}
+          </Text>
+        </Pressable>
+        {favoritesError ? <Text style={styles.favoriteError}>{favoritesError}</Text> : null}
 
         <View style={styles.metadata}>
           <View style={styles.metadataItem}>
@@ -90,6 +136,42 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '800',
     lineHeight: 36,
+  },
+  favoriteButton: {
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: '#C2412D',
+    borderRadius: 6,
+    marginTop: 18,
+    minHeight: 44,
+    justifyContent: 'center',
+    paddingHorizontal: 18,
+    paddingVertical: 11,
+  },
+  removeFavoriteButton: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#C2412D',
+    borderWidth: 1,
+  },
+  favoriteButtonDisabled: {
+    opacity: 0.55,
+  },
+  favoriteButtonPressed: {
+    opacity: 0.8,
+  },
+  favoriteButtonText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  removeFavoriteButtonText: {
+    color: '#C2412D',
+  },
+  favoriteError: {
+    color: '#B42318',
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: 10,
   },
   metadata: {
     borderBottomColor: '#DDE2E8',

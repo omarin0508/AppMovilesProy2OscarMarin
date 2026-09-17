@@ -1,39 +1,34 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useEffect } from 'react';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MovieCard } from '../components/MovieCard';
-import { useAppContext } from '../context/AppContext';
+import { useFavoritesContext } from '../context/FavoritesContext';
 import { RootStackParamList } from '../navigation/types';
 
-type ExploreScreenProps = NativeStackScreenProps<RootStackParamList, 'Explore'>;
+type FavoritesScreenProps = NativeStackScreenProps<RootStackParamList, 'Favorites'>;
 
-export function ExploreScreen({ navigation }: ExploreScreenProps) {
-  const { movies, loading, error, loadMovies } = useAppContext();
+export function FavoritesScreen({ navigation }: FavoritesScreenProps) {
+  const { favorites, favoritesError, favoritesLoading, loadFavorites } = useFavoritesContext();
   const insets = useSafeAreaInsets();
 
-  useEffect(() => {
-    void loadMovies();
-  }, [loadMovies]);
-
-  if (loading && movies.length === 0) {
+  if (favoritesLoading && favorites.length === 0) {
     return (
       <View style={styles.centeredState}>
         <ActivityIndicator color="#C2412D" size="large" />
-        <Text style={styles.stateTitle}>Cargando peliculas...</Text>
+        <Text style={styles.stateTitle}>Cargando favoritos...</Text>
       </View>
     );
   }
 
-  if (error && movies.length === 0) {
+  if (favoritesError && favorites.length === 0) {
     return (
       <View style={styles.centeredState}>
-        <Text style={styles.stateTitle}>No pudimos cargar las peliculas</Text>
-        <Text style={styles.errorMessage}>{error}</Text>
+        <Text style={styles.stateTitle}>No pudimos cargar tus favoritos</Text>
+        <Text style={styles.errorMessage}>{favoritesError}</Text>
         <Pressable
           accessibilityRole="button"
-          onPress={() => void loadMovies()}
+          onPress={() => void loadFavorites()}
           style={({ pressed }) => [styles.retryButton, pressed && styles.retryButtonPressed]}
         >
           <Text style={styles.retryButtonText}>Reintentar</Text>
@@ -46,32 +41,32 @@ export function ExploreScreen({ navigation }: ExploreScreenProps) {
     <FlatList
       contentContainerStyle={[
         styles.listContent,
-        { paddingBottom: Math.max(insets.bottom, 32), paddingTop: Math.max(insets.top + 12, 20) },
+        { paddingBottom: Math.max(insets.bottom, 32) },
+        favorites.length === 0 && styles.emptyListContent,
       ]}
-      data={movies}
+      data={favorites}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
       keyExtractor={(movie) => movie.id.toString()}
-      ListEmptyComponent={<Text style={styles.emptyMessage}>No hay peliculas disponibles.</Text>}
-      ListHeaderComponent={
-        <View style={styles.header}>
-          <Text style={styles.eyebrow}>TMDB</Text>
-          <Text style={styles.title}>Explorar peliculas</Text>
-          <Text style={styles.subtitle}>Titulos populares para descubrir hoy.</Text>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => navigation.navigate('Favorites')}
-            style={({ pressed }) => [styles.favoritesButton, pressed && styles.favoritesButtonPressed]}
-          >
-            <Text style={styles.favoritesButtonText}>Mis favoritos</Text>
-          </Pressable>
-          {error ? <Text style={styles.inlineError}>{error}</Text> : null}
+      ListEmptyComponent={
+        <View style={styles.emptyState}>
+          <Text style={styles.stateTitle}>Sin favoritos todavia</Text>
+          <Text style={styles.emptyMessage}>Agrega peliculas desde su detalle.</Text>
         </View>
       }
-      refreshing={loading}
+      ListHeaderComponent={
+        favorites.length > 0 ? (
+          <View style={styles.header}>
+            <Text style={styles.title}>Tus peliculas guardadas</Text>
+            <Text style={styles.subtitle}>Disponibles desde este dispositivo.</Text>
+            {favoritesError ? <Text style={styles.inlineError}>{favoritesError}</Text> : null}
+          </View>
+        ) : null
+      }
+      refreshing={favoritesLoading}
       renderItem={({ item }) => (
         <MovieCard movie={item} onPress={() => navigation.navigate('MovieDetail', { movie: item })} />
       )}
-      onRefresh={() => void loadMovies()}
+      onRefresh={() => void loadFavorites()}
     />
   );
 }
@@ -79,6 +74,7 @@ export function ExploreScreen({ navigation }: ExploreScreenProps) {
 const styles = StyleSheet.create({
   centeredState: {
     alignItems: 'center',
+    backgroundColor: '#F4F6F8',
     flex: 1,
     justifyContent: 'center',
     padding: 28,
@@ -113,7 +109,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   listContent: {
+    backgroundColor: '#F4F6F8',
+    flexGrow: 1,
     padding: 20,
+  },
+  emptyListContent: {
+    justifyContent: 'center',
   },
   separator: {
     height: 14,
@@ -121,49 +122,32 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 22,
   },
-  eyebrow: {
-    color: '#C2412D',
-    fontSize: 13,
-    fontWeight: '800',
-  },
   title: {
     color: '#182230',
-    fontSize: 30,
+    fontSize: 26,
     fontWeight: '800',
-    lineHeight: 38,
-    marginTop: 4,
+    lineHeight: 34,
   },
   subtitle: {
     color: '#667085',
-    fontSize: 16,
-    lineHeight: 23,
+    fontSize: 15,
+    lineHeight: 22,
     marginTop: 4,
-  },
-  favoritesButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#182230',
-    borderRadius: 6,
-    marginTop: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-  },
-  favoritesButtonPressed: {
-    backgroundColor: '#344054',
-  },
-  favoritesButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '700',
   },
   inlineError: {
     color: '#B42318',
     fontSize: 14,
     marginTop: 12,
   },
+  emptyState: {
+    alignItems: 'center',
+    padding: 28,
+  },
   emptyMessage: {
     color: '#667085',
     fontSize: 15,
-    paddingVertical: 40,
+    lineHeight: 22,
+    marginTop: 8,
     textAlign: 'center',
   },
 });
