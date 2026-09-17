@@ -2,13 +2,13 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView, StyleSheet } from 'react-native';
 
 import { AppProvider } from './src/context/AppContext';
-import { StarterScreen } from './src/screens/StarterScreen';
+import { ExploreScreen } from './src/screens/ExploreScreen';
 
 export default function App() {
   return (
     <AppProvider>
       <SafeAreaView style={styles.container}>
-        <StarterScreen />
+        <ExploreScreen />
         <StatusBar style="dark" />
       </SafeAreaView>
     </AppProvider>
@@ -18,6 +18,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6F7FB',
+    backgroundColor: '#F4F6F8',
   },
 });

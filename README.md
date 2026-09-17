@@ -1,4 +1,4 @@
-# Proyecto Programado 2 - Explorador de Datos y Consumo de APIs
+# Proyecto Programado 2 - Movie Explorer
 
 Curso: Programacion para Dispositivos Moviles (TPA-4001)
 
@@ -8,33 +8,46 @@ Tecnologia principal: React Native + Expo + TypeScript
 
 ## Estado
 
-Linea base inicial del proyecto. Esta fase prepara el repositorio, la configuracion de Expo y una estructura minima para continuar con la seleccion de API publica, manejo de estado global y persistencia local.
+Fase 1A: corte vertical para consultar y mostrar peliculas populares de TMDB.
 
 ## Alcance de esta fase
 
 - Proyecto Expo con TypeScript.
-- Aplicacion inicial funcional.
-- Context API configurado de forma minima.
-- Separacion inicial entre pantalla, componente reutilizable, contexto y tipos.
-- Sin API publica seleccionada todavia.
+- Servicio para la API REST de TMDB con mapeo a un modelo propio.
+- Context API con peliculas, carga, error y reintento.
+- Pantalla de exploracion construida con `FlatList`.
+- Tarjeta reutilizable para mostrar cada pelicula.
 - Sin almacenamiento local implementado todavia.
 - Enunciado del proyecto disponible en `docs/public_Tarea_2.pdf`.
 
-## Estructura inicial
+## Estructura actual
 
 ```text
 src/
 ├── components/
-│   └── InfoItem.tsx
+│   └── MovieCard.tsx
 ├── context/
 │   └── AppContext.tsx
 ├── screens/
-│   └── StarterScreen.tsx
+│   └── ExploreScreen.tsx
+├── services/
+│   └── movieService.ts
 └── types/
-    └── app.ts
+    └── movie.ts
 ```
 
-Las carpetas `services`, `storage` y `utils` se agregaran cuando exista una decision concreta de API, persistencia y utilidades reales.
+Las capas de detalle, favoritos, navegacion y persistencia se agregaran en fases posteriores.
+
+## Configuracion de TMDB
+
+1. Copiar `.env.example` como `.env`.
+2. Reemplazar el valor de ejemplo con un API Read Access Token de TMDB.
+
+```text
+EXPO_PUBLIC_TMDB_READ_ACCESS_TOKEN=token_personal
+```
+
+El archivo `.env` es local y esta excluido de Git.
 
 ## Ejecucion
 
