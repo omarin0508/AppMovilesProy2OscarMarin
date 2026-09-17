@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ExploreScreen } from '../screens/ExploreScreen';
 import { FavoritesScreen } from '../screens/FavoritesScreen';
 import { MovieDetailScreen } from '../screens/MovieDetailScreen';
+import { ProjectHelpScreen } from '../screens/ProjectHelpScreen';
 import { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -12,6 +13,11 @@ export function AppNavigator() {
     <Stack.Navigator>
       <Stack.Screen component={ExploreScreen} name="Explore" options={{ headerShown: false }} />
       <Stack.Screen component={FavoritesScreen} name="Favorites" options={{ title: 'Mis favoritos' }} />
+      <Stack.Screen
+        component={ProjectHelpScreen}
+        name="ProjectHelp"
+        options={{ title: 'Explicación del proyecto' }}
+      />
       <Stack.Screen component={MovieDetailScreen} name="MovieDetail" options={{ title: 'Detalle' }} />
     </Stack.Navigator>
   );

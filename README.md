@@ -6,11 +6,11 @@ Estudiante: Oscar Marin
 
 Tecnologia principal: React Native + Expo + TypeScript
 
-## Estado
+## Estado del proyecto
 
-Fase 2C: interfaz de favoritos conectada al estado global y a SQLite.
+Aplicacion completa con consulta de peliculas en TMDB y favoritos persistentes en SQLite.
 
-## Alcance de esta fase
+## Funcionalidad implementada
 
 - Proyecto Expo con TypeScript.
 - Servicio para la API REST de TMDB con mapeo a un modelo propio.
@@ -23,6 +23,7 @@ Fase 2C: interfaz de favoritos conectada al estado global y a SQLite.
 - `FavoritesContext` para cargar y mantener el estado global de favoritos.
 - Accion para agregar o quitar favoritos desde el detalle.
 - Pantalla de favoritos con estados de carga, error y lista vacia.
+- Pantalla de explicacion del flujo funcional y tecnico del proyecto.
 - Enunciado del proyecto disponible en `docs/public_Tarea_2.pdf`.
 
 ## Estructura actual
@@ -40,7 +41,8 @@ src/
 ├── screens/
 │   ├── ExploreScreen.tsx
 │   ├── FavoritesScreen.tsx
-│   └── MovieDetailScreen.tsx
+│   ├── MovieDetailScreen.tsx
+│   └── ProjectHelpScreen.tsx
 ├── services/
 │   └── movieService.ts
 ├── storage/
@@ -82,7 +84,7 @@ SQLite
   con la interfaz.
 - Las pantallas y componentes presentan datos y procesan la interaccion del usuario, sin SQL ni
   implementaciones directas de red.
-- La navegacion define transiciones tipadas entre Explore, MovieDetail y Favorites.
+- La navegacion define transiciones tipadas entre Explore, MovieDetail, Favorites y ProjectHelp.
 
 ## Trazabilidad de requisitos
 

@@ -64,6 +64,13 @@ export function ExploreScreen({ navigation }: ExploreScreenProps) {
           >
             <Text style={styles.favoritesButtonText}>Mis favoritos</Text>
           </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => navigation.navigate('ProjectHelp')}
+            style={({ pressed }) => [styles.helpButton, pressed && styles.helpButtonPressed]}
+          >
+            <Text style={styles.helpButtonText}>Explicación del proyecto</Text>
+          </Pressable>
           {error ? <Text style={styles.inlineError}>{error}</Text> : null}
         </View>
       }
@@ -152,6 +159,23 @@ const styles = StyleSheet.create({
   },
   favoritesButtonText: {
     color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  helpButton: {
+    alignSelf: 'flex-start',
+    borderColor: '#667085',
+    borderRadius: 6,
+    borderWidth: 1,
+    marginTop: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  helpButtonPressed: {
+    backgroundColor: '#E8ECEF',
+  },
+  helpButtonText: {
+    color: '#344054',
     fontSize: 14,
     fontWeight: '700',
   },
