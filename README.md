@@ -8,7 +8,7 @@ Tecnologia principal: React Native + Expo + TypeScript
 
 ## Estado
 
-Fase 1B: exploracion de peliculas populares y detalle mediante navegacion nativa.
+Fase 2A: capa local de persistencia de favoritos con SQLite.
 
 ## Alcance de esta fase
 
@@ -19,7 +19,7 @@ Fase 1B: exploracion de peliculas populares y detalle mediante navegacion nativa
 - Tarjeta reutilizable para mostrar cada pelicula.
 - Navegacion tipada entre exploracion y detalle.
 - Detalle con poster, fecha de estreno, calificacion y sinopsis.
-- Sin almacenamiento local implementado todavia.
+- Persistencia local de favoritos con `expo-sqlite`, aislada de la UI y del estado global.
 - Enunciado del proyecto disponible en `docs/public_Tarea_2.pdf`.
 
 ## Estructura actual
@@ -38,11 +38,15 @@ src/
 │   └── MovieDetailScreen.tsx
 ├── services/
 │   └── movieService.ts
+├── storage/
+│   └── favoriteStorage.ts
 └── types/
     └── movie.ts
 ```
 
-Las capas de favoritos y persistencia se agregaran en fases posteriores.
+`src/storage/` concentra la inicializacion de SQLite y las operaciones para guardar, leer,
+eliminar y consultar favoritos. La interfaz de favoritos y su integracion con Context se
+agregaran en fases posteriores; la persistencia aun no se ha validado en runtime.
 
 ## Configuracion de TMDB
 
